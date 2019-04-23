@@ -18,12 +18,16 @@ class AWSAppSyncCognitoAuthTests: XCTestCase {
     /// than you think, to account for CI systems running in shared environments
     private static let networkOperationTimeout = 180.0
 
-    private static let s3TransferUtilityKey = "AWSAppSyncCognitoAuthTestsTransferUtility"
+    private var s3TransferUtilityKey: String!
 
     private static let mutationQueue = DispatchQueue(label: "com.amazonaws.appsync.AWSAppSyncCognitoAuthTests.mutationQueue")
 
+    override func setUp() {
+        let timestamp = Date().timeIntervalSince1970
+        s3TransferUtilityKey = "AWSAppSyncCognitoAuthTestsTransferUtility-\(timestamp)"
+    }
     override func tearDown() {
-        AWSS3TransferUtility.remove(forKey: AWSAppSyncCognitoAuthTests.s3TransferUtilityKey)
+        AWSS3TransferUtility.remove(forKey: s3TransferUtilityKey)
     }
 
     func testIAMAuthCanPerformMutation() throws {
@@ -181,8 +185,8 @@ class AWSAppSyncCognitoAuthTests: XCTestCase {
             region: testConfiguration.bucketRegion,
             credentialsProvider: credentialsProvider)!
 
-        AWSS3TransferUtility.register(with: serviceConfiguration, forKey: AWSAppSyncCognitoAuthTests.s3TransferUtilityKey)
-        let transferUtility = AWSS3TransferUtility.s3TransferUtility(forKey: AWSAppSyncCognitoAuthTests.s3TransferUtilityKey)
+        AWSS3TransferUtility.register(with: serviceConfiguration, forKey: s3TransferUtilityKey)
+        let transferUtility = AWSS3TransferUtility.s3TransferUtility(forKey: s3TransferUtilityKey)
 
         let helper = try AppSyncClientTestHelper(
             with: .cognitoIdentityPools,
