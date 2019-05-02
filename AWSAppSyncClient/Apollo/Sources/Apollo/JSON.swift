@@ -54,6 +54,10 @@ func equals(_ lhs: Any, _ rhs: Any) -> Bool {
   if let lhs = lhs as? Reference, let rhs = rhs as? Reference {
     return lhs == rhs
   }
+
+  if let lhs = lhs as? [Reference], let rhs = rhs as? [Reference] {
+    return lhs == rhs
+  }
   
   let lhs = lhs as AnyObject, rhs = rhs as AnyObject
   return lhs.isEqual(rhs)
